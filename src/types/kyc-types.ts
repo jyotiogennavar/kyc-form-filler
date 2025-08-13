@@ -4,6 +4,52 @@ export const STATE_CODES = [
   "AN","AP","AR","AS","BR","CH","CT","DD","DL","DN","GA","GJ","HP","HR","JH","JK","KA","KL","LA","LD","MH","ML","MN","MP","MZ","NL","OD","PB","PY","RJ","SK","TB","TN","TR","UP","UT","WB",
 ];
 
+// Mapping of state/UT code to full name (as typically printed on forms)
+export const STATE_CODE_TO_NAME: Record<string, string> = {
+  AN: "Andaman and Nicobar Islands",
+  AP: "Andhra Pradesh",
+  AR: "Arunachal Pradesh",
+  AS: "Assam",
+  BR: "Bihar",
+  CH: "Chandigarh",
+  CT: "Chhattisgarh",
+  DD: "Daman and Diu",
+  DL: "Delhi",
+  DN: "Dadra and Nagar Haveli",
+  GA: "Goa",
+  GJ: "Gujarat",
+  HP: "Himachal Pradesh",
+  HR: "Haryana",
+  JH: "Jharkhand",
+  JK: "Jammu and Kashmir",
+  KA: "Karnataka",
+  KL: "Kerala",
+  LA: "Ladakh",
+  LD: "Lakshadweep",
+  MH: "Maharashtra",
+  ML: "Meghalaya",
+  MN: "Manipur",
+  MP: "Madhya Pradesh",
+  MZ: "Mizoram",
+  NL: "Nagaland",
+  OD: "Odisha",
+  PB: "Punjab",
+  PY: "Puducherry",
+  RJ: "Rajasthan",
+  SK: "Sikkim",
+  TB: "Telangana",
+  TN: "Tamil Nadu",
+  TR: "Tripura",
+  UP: "Uttar Pradesh",
+  UT: "Uttarakhand",
+  WB: "West Bengal",
+};
+
+// Reverse lookup map for convenience
+export const STATE_NAME_TO_CODE: Record<string, string> = Object.fromEntries(
+  Object.entries(STATE_CODE_TO_NAME).map(([code, name]) => [name.toLowerCase(), code])
+);
+
 export const COUNTRY_CODES_ISO2 = [
   "IN","US","GB","AE","AU","CA","SG","DE","FR","JP","CN"
 ];

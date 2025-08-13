@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Address section: OVD details, Permanent Address, and Current Address.
  *
@@ -7,6 +9,7 @@
  * - Validation rules live in `kycSchema` (superRefine enforces conditionals).
  */
 import { UseFormReturn } from "react-hook-form";
+import { useEffect } from "react";
 import { KycFormData } from "@/schemas/kyc-schema";
 import {
   FormField,
@@ -19,13 +22,161 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { OVD_TYPES, STATE_CODES, COUNTRY_CODES_ISO2 } from "@/types/kyc-types";
+import { OVD_TYPES, STATE_CODES, COUNTRY_CODES_ISO2, STATE_CODE_TO_NAME, STATE_NAME_TO_CODE } from "@/types/kyc-types";
 
 interface AddressProps {
   form: UseFormReturn<KycFormData>;
 }
 
 export function Address({ form }: AddressProps) {
+  // Helpers to map postal data to our fields
+  async function fetchByPincode(pin: string) {
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+      const data = await res.json();
+      const result = Array.isArray(data) ? data[0] : undefined;
+      if (result && result.Status === "Success" && Array.isArray(result.PostOffice) && result.PostOffice.length > 0) {
+        const office = result.PostOffice[0];
+        return {
+          city: office.Name as string | undefined,
+          district: office.District as string | undefined,
+          stateName: office.State as string | undefined,
+          pinCode: office.Pincode as string | undefined,
+        };
+      }
+    } catch {
+      // ignore
+    }
+    return undefined;
+  }
+
+  async function fetchByPlaceName(place: string) {
+    try {
+      const res = await fetch(`https://api.postalpincode.in/postoffice/${encodeURIComponent(place)}`);
+      const data = await res.json();
+      const result = Array.isArray(data) ? data[0] : undefined;
+      if (result && result.Status === "Success" && Array.isArray(result.PostOffice) && result.PostOffice.length > 0) {
+        const office = result.PostOffice[0];
+        return {
+          city: office.Name as string | undefined,
+          district: office.District as string | undefined,
+          stateName: office.State as string | undefined,
+          pinCode: office.Pincode as string | undefined,
+        };
+      }
+    } catch {
+      // ignore
+    }
+    return undefined;
+  }
+
+  // Watch values
+  const pin = form.watch("pinCode");
+  const city = form.watch("cityTownVillage");
+  const district = form.watch("district");
+  const sameAsAbove = form.watch("currentAddressSameAsAbove");
+  const currentPin = form.watch("currentPinCode");
+  const currentCity = form.watch("currentCityTownVillage");
+  const currentDistrict = form.watch("currentDistrict");
+
+  // Autofill for permanent address
+  useEffect(() => {
+    if (/^\d{6}$/.test(pin || "")) {
+      fetchByPincode(pin as string).then((info) => {
+        if (!info) return;
+        const { city, district, stateName, pinCode } = info;
+        if (city && !form.getValues("cityTownVillage")) form.setValue("cityTownVillage", city);
+        if (district && !form.getValues("district")) form.setValue("district", district);
+        if (stateName) {
+          const code = STATE_NAME_TO_CODE[stateName.toLowerCase()];
+          if (code) form.setValue("stateCode", code);
+        }
+        if (pinCode && !form.getValues("pinCode")) form.setValue("pinCode", pinCode);
+      });
+    }
+  }, [pin, form]);
+
+  useEffect(() => {
+    if ((city || "").length >= 3) {
+      fetchByPlaceName(city as string).then((info) => {
+        if (!info) return;
+        const { district, stateName, pinCode } = info;
+        if (district && !form.getValues("district")) form.setValue("district", district);
+        if (stateName) {
+          const code = STATE_NAME_TO_CODE[stateName.toLowerCase()];
+          if (code) form.setValue("stateCode", code);
+        }
+        if (pinCode && !form.getValues("pinCode")) form.setValue("pinCode", pinCode);
+      });
+    }
+  }, [city, form]);
+
+  useEffect(() => {
+    if ((district || "").length >= 3 && !form.getValues("stateCode")) {
+      fetchByPlaceName(district as string).then((info) => {
+        if (!info) return;
+        const { stateName, pinCode } = info;
+        if (stateName) {
+          const code = STATE_NAME_TO_CODE[stateName.toLowerCase()];
+          if (code) form.setValue("stateCode", code);
+        }
+        if (pinCode && !form.getValues("pinCode")) form.setValue("pinCode", pinCode);
+      });
+    }
+  }, [district, form]);
+
+  // Autofill for current address (only when not same as above)
+  useEffect(() => {
+    if (!sameAsAbove) {
+      if (/^\d{6}$/.test(currentPin || "")) {
+        fetchByPincode(currentPin as string).then((info) => {
+          if (!info) return;
+          const { city, district, stateName, pinCode } = info;
+          if (city && !form.getValues("currentCityTownVillage")) form.setValue("currentCityTownVillage", city);
+          if (district && !form.getValues("currentDistrict")) form.setValue("currentDistrict", district);
+          if (stateName) {
+            const code = STATE_NAME_TO_CODE[stateName.toLowerCase()];
+            if (code) form.setValue("currentStateCode", code);
+          }
+          if (pinCode && !form.getValues("currentPinCode")) form.setValue("currentPinCode", pinCode);
+        });
+      }
+    }
+  }, [currentPin, sameAsAbove, form]);
+
+  useEffect(() => {
+    if (!sameAsAbove) {
+      if ((currentCity || "").length >= 3) {
+        fetchByPlaceName(currentCity as string).then((info) => {
+          if (!info) return;
+          const { district, stateName, pinCode } = info;
+          if (district && !form.getValues("currentDistrict")) form.setValue("currentDistrict", district);
+          if (stateName) {
+            const code = STATE_NAME_TO_CODE[stateName.toLowerCase()];
+            if (code) form.setValue("currentStateCode", code);
+          }
+          if (pinCode && !form.getValues("currentPinCode")) form.setValue("currentPinCode", pinCode);
+        });
+      }
+    }
+  }, [currentCity, sameAsAbove, form]);
+
+  useEffect(() => {
+    if (!sameAsAbove) {
+      if ((currentDistrict || "").length >= 3 && !form.getValues("currentStateCode")) {
+        fetchByPlaceName(currentDistrict as string).then((info) => {
+          if (!info) return;
+          const { stateName, pinCode } = info;
+          if (stateName) {
+            const code = STATE_NAME_TO_CODE[stateName.toLowerCase()];
+            if (code) form.setValue("currentStateCode", code);
+          }
+          if (pinCode && !form.getValues("currentPinCode")) form.setValue("currentPinCode", pinCode);
+        });
+      }
+    }
+  }, [currentDistrict, sameAsAbove, form]);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -147,7 +298,7 @@ export function Address({ form }: AddressProps) {
           <CardTitle>Permanent Address</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <FormField
               control={form.control}
               name="addressLine1"
@@ -243,7 +394,9 @@ export function Address({ form }: AddressProps) {
                     </FormControl>
                     <SelectContent>
                       {STATE_CODES.map((code) => (
-                        <SelectItem key={code} value={code}>{code}</SelectItem>
+                        <SelectItem key={code} value={code}>
+                          {`${code} - ${STATE_CODE_TO_NAME[code] ?? ""}`}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -299,7 +452,7 @@ export function Address({ form }: AddressProps) {
             <CardTitle>Current Address</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
                 name="currentAddressLine1"
@@ -341,7 +494,7 @@ export function Address({ form }: AddressProps) {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <FormField
                 control={form.control}
                 name="currentCityTownVillage"
@@ -381,7 +534,7 @@ export function Address({ form }: AddressProps) {
                   </FormItem>
                 )}
               />
-              <FormField
+                <FormField
                 control={form.control}
                 name="currentStateCode"
                 render={({ field }) => (
@@ -390,13 +543,15 @@ export function Address({ form }: AddressProps) {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select" />
+                            <SelectValue placeholder="Select" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {STATE_CODES.map((code) => (
-                          <SelectItem key={code} value={code}>{code}</SelectItem>
-                        ))}
+                          {STATE_CODES.map((code) => (
+                            <SelectItem key={code} value={code}>
+                              {`${code} - ${STATE_CODE_TO_NAME[code] ?? ""}`}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

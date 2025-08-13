@@ -19,6 +19,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UseFormReturn } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { KycFormData } from "@/schemas/kyc-schema";
 
 interface Props {
@@ -35,6 +36,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  * - File upload for photo kept optional per PDF guidance.
  */
 export function PersonalDetails({ form }: Props) {
+  const photoFile = form.watch("photo");
+  const [photoUrl, setPhotoUrl] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (photoFile instanceof File) {
+      const url = URL.createObjectURL(photoFile);
+      setPhotoUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setPhotoUrl(undefined);
+    return undefined;
+  }, [photoFile]);
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -632,6 +646,11 @@ export function PersonalDetails({ form }: Props) {
               />
             </FormControl>
             <FormMessage />
+            {photoUrl && (
+              <div className="mt-2">
+                <img src={photoUrl} alt="Photo preview" className="h-32 w-32 object-cover border rounded" />
+              </div>
+            )}
           </FormItem>
         )}
       />

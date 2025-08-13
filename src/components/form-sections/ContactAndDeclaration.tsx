@@ -5,6 +5,7 @@
  * - File input for signature is stored as File; schema validates types and formats.
  */
 import { UseFormReturn } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { KycFormData } from "@/schemas/kyc-schema";
 import {
   FormField,
@@ -22,6 +23,19 @@ interface ContactAndDeclarationProps {
 }
 
 export function ContactAndDeclaration({ form }: ContactAndDeclarationProps) {
+  const signatureFile = form.watch("signature");
+  const [signatureUrl, setSignatureUrl] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (signatureFile instanceof File) {
+      const url = URL.createObjectURL(signatureFile);
+      setSignatureUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setSignatureUrl(undefined);
+    return undefined;
+  }, [signatureFile]);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -156,6 +170,11 @@ export function ContactAndDeclaration({ form }: ContactAndDeclarationProps) {
                     />
                   </FormControl>
                   <FormMessage />
+                  {signatureUrl && (
+                    <div className="mt-2">
+                      <img src={signatureUrl} alt="Signature preview" className="h-20 w-auto object-contain border rounded bg-white" />
+                    </div>
+                  )}
                 </FormItem>
               )}
             />

@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
 
 interface ContactAndDeclarationProps {
   form: UseFormReturn<KycFormData>;
@@ -172,7 +173,14 @@ export function ContactAndDeclaration({ form }: ContactAndDeclarationProps) {
                   <FormMessage />
                   {signatureUrl && (
                     <div className="mt-2">
-                      <img src={signatureUrl} alt="Signature preview" className="h-20 w-auto object-contain border rounded bg-white" />
+                      <Image 
+                        src={signatureUrl} 
+                        alt="Signature preview" 
+                        width={200} 
+                        height={80} 
+                        className="object-contain border rounded bg-white" 
+                        unoptimized 
+                      />
                     </div>
                   )}
                 </FormItem>

@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function FormWrapper() {
   const form = useForm<KycFormData>({
@@ -234,13 +235,27 @@ export default function FormWrapper() {
                   {previewData.photoUrl && (
                     <div className="space-y-1 text-sm">
                       <div className="font-semibold">Photo</div>
-                      <img src={previewData.photoUrl} alt="Photo" className="h-32 w-32 object-cover border rounded" />
+                      <Image 
+                        src={previewData.photoUrl} 
+                        alt="Photo" 
+                        width={128} 
+                        height={128} 
+                        className="object-cover border rounded" 
+                        unoptimized 
+                      />
                     </div>
                   )}
                   {previewData.signatureUrl && (
                     <div className="space-y-1 text-sm">
                       <div className="font-semibold">Signature</div>
-                      <img src={previewData.signatureUrl} alt="Signature" className="h-20 w-auto object-contain border rounded bg-white" />
+                      <Image 
+                        src={previewData.signatureUrl} 
+                        alt="Signature" 
+                        width={200} 
+                        height={80} 
+                        className="object-contain border rounded bg-white" 
+                        unoptimized 
+                      />
                     </div>
                   )}
                 </div>

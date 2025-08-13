@@ -68,6 +68,81 @@ export const kycSchema = z.object({
   declarationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
   declarationPlace: z.string().min(1, "Place is required"),
   signature: z.instanceof(File).optional(), // Image upload
+}).superRefine((data, ctx) => {
+  // Conditional: KYC number is mandatory on update applications
+  if (data.applicationType === "update" && (!data.kycNumber || data.kycNumber.trim() === "")) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["kycNumber"],
+      message: "KYC Number is required for updates",
+    });
+  }
+
+  // Conditional: Citizenship other than Indian requires country details
+  if (data.citizenship === "others") {
+    if (!data.citizenshipCountry || data.citizenshipCountry.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["citizenshipCountry"],
+        message: "Citizenship country is required",
+      });
+    }
+    if (!data.citizenshipCountryCode || data.citizenshipCountryCode.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["citizenshipCountryCode"],
+        message: "Country code is required",
+      });
+    }
+  }
+
+  // Conditional: OVD specific requirements
+  if (data.ovdType === "passport") {
+    if (!data.passportNumber || data.passportNumber.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["passportNumber"],
+        message: "Passport number is required",
+      });
+    }
+    if (!data.passportExpiry || data.passportExpiry.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["passportExpiry"],
+        message: "Passport expiry date is required",
+      });
+    }
+  }
+  if (data.ovdType === "driving-licence") {
+    if (!data.drivingLicenceExpiry || data.drivingLicenceExpiry.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["drivingLicenceExpiry"],
+        message: "Driving licence expiry date is required",
+      });
+    }
+  }
+
+  // Conditional: Current address required if not same as permanent
+  if (!data.currentAddressSameAsAbove) {
+    const requiredCurrentFields: Array<keyof typeof data> = [
+      "currentAddressLine1",
+      "currentCityTownVillage",
+      "currentDistrict",
+      "currentPinCode",
+      "currentStateCode",
+      "currentCountryCode",
+    ];
+    requiredCurrentFields.forEach((field) => {
+      if (!data[field] || String(data[field]).trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [field as string],
+          message: "This field is required",
+        });
+      }
+    });
+  }
 });
 
 // Infer TypeScript type from schema

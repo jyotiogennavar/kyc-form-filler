@@ -25,10 +25,22 @@ interface Props {
   form: UseFormReturn<KycFormData>;
 }
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+/**
+ * Personal Details section: Application meta, names, DOB, gender, marital, citizenship, PAN.
+ *
+ * - Structured rows mimic the PDF layout with clear labels and spacing.
+ * - Conditional blocks: KYC number on update, citizenship country when not Indian.
+ * - File upload for photo kept optional per PDF guidance.
+ */
 export function PersonalDetails({ form }: Props) {
   return (
-    <div className="space-y-4 w-full">
-      <h2 className="text-xl font-bold">Personal Details</h2>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="text-xl">Personal Details</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
       <FormField
         control={form.control}
         name="applicationType"
@@ -397,7 +409,7 @@ export function PersonalDetails({ form }: Props) {
                     )}
                   </div> */}
 
-      {/* Date of Birth */}
+      {/* Date of Birth - See kycSchema for validation. This uses native date input to keep UX simple. */}
       <FormField
         control={form.control}
         name="dateOfBirth"
@@ -623,7 +635,8 @@ export function PersonalDetails({ form }: Props) {
           </FormItem>
         )}
       />
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 

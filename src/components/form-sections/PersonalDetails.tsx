@@ -19,7 +19,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UseFormReturn } from "react-hook-form";
-import { useEffect, useState } from "react";
 import { KycFormData } from "@/schemas/kyc-schema";
 
 interface Props {
@@ -36,18 +35,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  * - File upload for photo kept optional per PDF guidance.
  */
 export function PersonalDetails({ form }: Props) {
-  const photoFile = form.watch("photo");
-  const [photoUrl, setPhotoUrl] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    if (photoFile instanceof File) {
-      const url = URL.createObjectURL(photoFile);
-      setPhotoUrl(url);
-      return () => URL.revokeObjectURL(url);
-    }
-    setPhotoUrl(undefined);
-    return undefined;
-  }, [photoFile]);
 
   return (
     <Card className="w-full">
@@ -59,8 +46,8 @@ export function PersonalDetails({ form }: Props) {
         control={form.control}
         name="applicationType"
         render={({ field }) => (
-          <FormItem className="flex gap-x-8">
-            <FormLabel>Application Type</FormLabel>
+          <FormItem className="flex items-center gap-x-8">
+            <FormLabel className="w-48">Application Type</FormLabel>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
@@ -87,8 +74,8 @@ export function PersonalDetails({ form }: Props) {
           control={form.control}
           name="kycNumber"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>KYC Number (Mandatory for Update)</FormLabel>
+            <FormItem className="flex items-center gap-x-8">
+              <FormLabel className="w-48">KYC Number (Mandatory for Update)</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -103,8 +90,8 @@ export function PersonalDetails({ form }: Props) {
         control={form.control}
         name="accountType"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Account Type</FormLabel>
+          <FormItem className="flex items-center gap-x-8">
+            <FormLabel className="w-48">Account Type</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -126,7 +113,7 @@ export function PersonalDetails({ form }: Props) {
 
       {/* Name Fields Row */}
       <div className="flex items-start gap-8">
-        <div className="w-32 pt-2">
+        <div className="w-48 pt-2">
           <Label className="text-sm font-medium">Name *</Label>
         </div>
         <div className="flex-1 flex gap-4">
@@ -138,15 +125,14 @@ export function PersonalDetails({ form }: Props) {
                 <FormLabel className="text-neutral-500">Prefix</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={field.value ?? "mr"}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select" />
+                      <SelectValue />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="mr">Mr.</SelectItem>
                     <SelectItem value="mrs">Mrs.</SelectItem>
                     <SelectItem value="ms">Ms.</SelectItem>
                   </SelectContent>
@@ -197,78 +183,11 @@ export function PersonalDetails({ form }: Props) {
         </div>
       </div>
 
-      {/* Maiden Name Row */}
-      <div className="flex items-start gap-8">
-        <div className="w-32 pt-2">
-          <Label className="text-sm font-medium">Maiden Name</Label>
-        </div>
-        <div className="flex-1 flex gap-4">
-          <FormField
-            control={form.control}
-            name="maidenPrefix"
-            render={({ field }) => (
-              <FormItem>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="mr">Mr.</SelectItem>
-                    <SelectItem value="mrs">Mrs.</SelectItem>
-                    <SelectItem value="ms">Ms.</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="maidenFirstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder="First Name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="maidenMiddleName"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder="Middle Name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="maidenName"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder="Last Name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      </div>
+      {/* Maiden Name removed */}
 
       {/* Father/Spouse Name Row */}
       <div className="flex items-start gap-8">
-        <div className="w-32 pt-2">
+        <div className="w-48 pt-2">
           <Label className="text-sm font-medium">Father/Spouse Name *</Label>
         </div>
         <div className="flex-1 flex gap-4">
@@ -337,7 +256,7 @@ export function PersonalDetails({ form }: Props) {
 
       {/* Mother Name Row */}
       <div className="flex items-start gap-8">
-        <div className="w-32 pt-2">
+        <div className="w-48 pt-2">
           <Label className="text-sm font-medium">Mother Name</Label>
         </div>
         <div className="flex-1 flex gap-4">
@@ -428,8 +347,8 @@ export function PersonalDetails({ form }: Props) {
         control={form.control}
         name="dateOfBirth"
         render={({ field }) => (
-          <FormItem className="mt-8 flex gap-x-8">
-            <FormLabel>Date of Birth *</FormLabel>
+          <FormItem className="mt-8 flex items-center gap-x-8">
+            <FormLabel className="w-48">Date of Birth *</FormLabel>
             <FormControl>
               <Input id="dob" type="date" placeholder="YYYY-MM-DD" {...field} />
             </FormControl>
@@ -443,8 +362,8 @@ export function PersonalDetails({ form }: Props) {
         control={form.control}
         name="gender"
         render={({ field }) => (
-          <FormItem className="flex gap-x-8">
-            <FormLabel>Gender *</FormLabel>
+          <FormItem className="flex items-center gap-x-8">
+            <FormLabel className="w-48">Gender *</FormLabel>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
@@ -475,8 +394,8 @@ export function PersonalDetails({ form }: Props) {
         control={form.control}
         name="maritalStatus"
         render={({ field }) => (
-          <FormItem className="flex gap-x-8">
-            <FormLabel>Marital Status *</FormLabel>
+          <FormItem className="flex items-center gap-x-8">
+            <FormLabel className="w-48">Marital Status *</FormLabel>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
@@ -507,8 +426,8 @@ export function PersonalDetails({ form }: Props) {
         control={form.control}
         name="citizenship"
         render={({ field }) => (
-          <FormItem className="flex gap-x-8">
-            <FormLabel>Citizenship *</FormLabel>
+          <FormItem className="flex items-center gap-x-8">
+            <FormLabel className="w-48">Citizenship *</FormLabel>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
@@ -537,8 +456,8 @@ export function PersonalDetails({ form }: Props) {
             control={form.control}
             name="citizenshipCountry"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Citizenship Country *</FormLabel>
+              <FormItem className="flex items-center gap-x-8">
+                <FormLabel className="w-48">Citizenship Country *</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter country name" {...field} />
                 </FormControl>
@@ -550,8 +469,8 @@ export function PersonalDetails({ form }: Props) {
             control={form.control}
             name="citizenshipCountryCode"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Country Code (ISO 3166) *</FormLabel>
+              <FormItem className="flex items-center gap-x-8">
+                <FormLabel className="w-48">Country Code (ISO 3166) *</FormLabel>
                 <FormControl>
                   <Input placeholder="e.g., US, UK, CA" {...field} />
                 </FormControl>
@@ -567,8 +486,8 @@ export function PersonalDetails({ form }: Props) {
         control={form.control}
         name="residentialStatus"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Residential Status *</FormLabel>
+          <FormItem className="flex items-center gap-x-8">
+            <FormLabel className="w-48">Residential Status *</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -596,8 +515,8 @@ export function PersonalDetails({ form }: Props) {
         control={form.control}
         name="pan"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>PAN *</FormLabel>
+          <FormItem className="flex items-center gap-x-8">
+            <FormLabel className="w-48">PAN *</FormLabel>
             <FormControl>
               <Input placeholder="ABCDE1234F" {...field} />
             </FormControl>
@@ -626,34 +545,7 @@ export function PersonalDetails({ form }: Props) {
         )}
       />
 
-      {/* Photo Upload */}
-      <FormField
-        control={form.control}
-        name="photo"
-        render={({ field: { onChange, name, onBlur, ref } }) => (
-          <FormItem>
-            <FormLabel>Photo (Optional)</FormLabel>
-            <FormControl>
-              <Input
-                type="file"
-                accept="image/*"
-                name={name}
-                onBlur={onBlur}
-                ref={ref}
-                onChange={(event) =>
-                  onChange(event.target.files && event.target.files[0])
-                }
-              />
-            </FormControl>
-            <FormMessage />
-            {photoUrl && (
-              <div className="mt-2">
-                <img src={photoUrl} alt="Photo preview" className="h-32 w-32 object-cover border rounded" />
-              </div>
-            )}
-          </FormItem>
-        )}
-      />
+      {/* Photo upload removed */}
       </CardContent>
     </Card>
   );

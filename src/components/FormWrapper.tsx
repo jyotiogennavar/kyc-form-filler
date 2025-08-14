@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import Image from "next/image";
+ 
 
 export default function FormWrapper() {
   const form = useForm<KycFormData>({
@@ -17,14 +17,10 @@ export default function FormWrapper() {
     defaultValues: {
       applicationType: "new",
       accountType: "normal",
-      prefix: undefined,
+      prefix: "mr",
       firstName: "",
       middleName: "",
       lastName: "",
-      maidenPrefix: undefined,
-      maidenFirstName: "",
-      maidenMiddleName: "",
-      maidenName: "",
       fatherSpousePrefix: undefined,
       fatherSpouseFirstName: "",
       fatherSpouseMiddleName: "",
@@ -42,7 +38,6 @@ export default function FormWrapper() {
       residentialStatus: "resident-individual",
       pan: "",
       form60Furnished: false,
-      photo: undefined,
       ovdType: undefined,
       passportNumber: "",
       passportExpiry: "",
@@ -67,40 +62,27 @@ export default function FormWrapper() {
       currentStateCode: "",
       currentCountryCode: "",
       deemedProofDocumentCode: "",
-      telOffice: "",
-      telResidence: "",
       mobile: "",
       email: "",
       remarks: "",
-      declarationDate: "",
+      declarationDate: new Date().toISOString().slice(0, 10),
       declarationPlace: "",
-      signature: undefined,
     },
   });
 
   const [mode, setMode] = useState<"form" | "preview">("form");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [previewData, setPreviewData] = useState<{
-    data: KycFormData;
-    photoUrl?: string;
-    signatureUrl?: string;
-  } | null>(null);
+  const [previewData, setPreviewData] = useState<{ data: KycFormData } | null>(null);
 
   useEffect(() => {
     return () => {
-      if (previewData?.photoUrl) URL.revokeObjectURL(previewData.photoUrl);
-      if (previewData?.signatureUrl) URL.revokeObjectURL(previewData.signatureUrl);
+      // no file URLs to revoke
     };
   }, [previewData]);
 
   const onSubmit = (data: KycFormData) => {
     setIsGenerating(true);
-    const next = {
-      data,
-      photoUrl: data.photo ? URL.createObjectURL(data.photo) : undefined,
-      signatureUrl: data.signature ? URL.createObjectURL(data.signature) : undefined,
-    } as const;
-    setPreviewData(next);
+    setPreviewData({ data });
     // Small delay to show the generating message clearly
     setTimeout(() => {
       setIsGenerating(false);
@@ -116,8 +98,8 @@ export default function FormWrapper() {
             <PersonalDetails form={form} />
             <Address form={form} />
             <ContactAndDeclaration form={form} />
-            <div className="sticky bottom-0 bg-gray-50 py-4">
-              <Button type="submit" className="w-full">Submit</Button>
+            <div className="py-4 flex justify-center">
+              <Button type="submit" className="w-[200px]">Submit</Button>
             </div>
             {isGenerating && (
               <div className="text-center text-sm text-muted-foreground mt-2">generating the preview...</div>
@@ -128,7 +110,7 @@ export default function FormWrapper() {
 
       {mode === "preview" && previewData && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">KYC Form Preview</h2>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setMode("form")}>Edit</Button>
@@ -146,9 +128,7 @@ export default function FormWrapper() {
                 )}
                 <div><span className="font-semibold">Account Type:</span> {previewData.data.accountType}</div>
                 <div className="md:col-span-3"><span className="font-semibold">Name:</span> {[previewData.data.prefix, previewData.data.firstName, previewData.data.middleName, previewData.data.lastName].filter(Boolean).join(" ")}</div>
-                {previewData.data.maidenFirstName || previewData.data.maidenName ? (
-                  <div className="md:col-span-3"><span className="font-semibold">Maiden Name:</span> {[previewData.data.maidenPrefix, previewData.data.maidenFirstName, previewData.data.maidenMiddleName, previewData.data.maidenName].filter(Boolean).join(" ")}</div>
-                ) : null}
+                {/* Maiden name removed */}
                 <div className="md:col-span-3"><span className="font-semibold">Father/Spouse:</span> {[previewData.data.fatherSpousePrefix, previewData.data.fatherSpouseFirstName, previewData.data.fatherSpouseMiddleName, previewData.data.fatherSpouseName].filter(Boolean).join(" ")}</div>
                 {previewData.data.motherFirstName || previewData.data.motherName ? (
                   <div className="md:col-span-3"><span className="font-semibold">Mother:</span> {[previewData.data.motherPrefix, previewData.data.motherFirstName, previewData.data.motherMiddleName, previewData.data.motherName].filter(Boolean).join(" ")}</div>
@@ -216,8 +196,6 @@ export default function FormWrapper() {
             <section className="space-y-2">
               <h3 className="font-medium text-lg">Contact & Declaration</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                <div><span className="font-semibold">Telephone (Office):</span> {previewData.data.telOffice}</div>
-                <div><span className="font-semibold">Telephone (Residence):</span> {previewData.data.telResidence}</div>
                 <div><span className="font-semibold">Mobile:</span> {previewData.data.mobile}</div>
                 <div className="md:col-span-3"><span className="font-semibold">Email:</span> {previewData.data.email}</div>
                 {previewData.data.remarks && (
@@ -228,39 +206,7 @@ export default function FormWrapper() {
               </div>
             </section>
 
-            {(previewData.photoUrl || previewData.signatureUrl) && (
-              <section className="space-y-2">
-                <h3 className="font-medium text-lg">Uploaded Images</h3>
-                <div className="flex gap-6 items-start">
-                  {previewData.photoUrl && (
-                    <div className="space-y-1 text-sm">
-                      <div className="font-semibold">Photo</div>
-                      <Image 
-                        src={previewData.photoUrl} 
-                        alt="Photo" 
-                        width={128} 
-                        height={128} 
-                        className="object-cover border rounded" 
-                        unoptimized 
-                      />
-                    </div>
-                  )}
-                  {previewData.signatureUrl && (
-                    <div className="space-y-1 text-sm">
-                      <div className="font-semibold">Signature</div>
-                      <Image 
-                        src={previewData.signatureUrl} 
-                        alt="Signature" 
-                        width={200} 
-                        height={80} 
-                        className="object-contain border rounded bg-white" 
-                        unoptimized 
-                      />
-                    </div>
-                  )}
-                </div>
-              </section>
-            )}
+            {/* No uploads to display */}
           </div>
         </div>
       )}

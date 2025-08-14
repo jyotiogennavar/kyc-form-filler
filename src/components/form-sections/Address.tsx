@@ -184,13 +184,13 @@ export function Address({ form }: AddressProps) {
           <CardTitle>Officially Valid Document (OVD)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-4">
             <FormField
               control={form.control}
               name="ovdType"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>OVD Type</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">OVD Type</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -216,8 +216,8 @@ export function Address({ form }: AddressProps) {
                   control={form.control}
                   name="passportNumber"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Passport Number</FormLabel>
+                    <FormItem className="flex items-center gap-x-8">
+                      <FormLabel className="w-48">Passport Number</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter passport number" {...field} />
                       </FormControl>
@@ -229,8 +229,8 @@ export function Address({ form }: AddressProps) {
                   control={form.control}
                   name="passportExpiry"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Passport Expiry</FormLabel>
+                    <FormItem className="flex items-center gap-x-8">
+                      <FormLabel className="w-48">Passport Expiry</FormLabel>
                       <FormControl>
                         <Input type="date" placeholder="YYYY-MM-DD" {...field} />
                       </FormControl>
@@ -246,8 +246,8 @@ export function Address({ form }: AddressProps) {
                 control={form.control}
                 name="drivingLicenceExpiry"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Driving Licence Expiry</FormLabel>
+                  <FormItem className="flex items-center gap-x-8">
+                    <FormLabel className="w-48">Driving Licence Expiry</FormLabel>
                     <FormControl>
                       <Input type="date" placeholder="YYYY-MM-DD" {...field} />
                     </FormControl>
@@ -298,13 +298,13 @@ export function Address({ form }: AddressProps) {
           <CardTitle>Permanent Address</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 gap-4">
+          <div className="space-y-4">
             <FormField
               control={form.control}
               name="addressLine1"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address Line 1</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Address Line 1</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -316,8 +316,8 @@ export function Address({ form }: AddressProps) {
               control={form.control}
               name="addressLine2"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address Line 2</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Address Line 2</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -329,8 +329,8 @@ export function Address({ form }: AddressProps) {
               control={form.control}
               name="addressLine3"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address Line 3</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Address Line 3</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -340,13 +340,13 @@ export function Address({ form }: AddressProps) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="space-y-4">
             <FormField
               control={form.control}
               name="cityTownVillage"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City/Town/Village</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">City/Town/Village</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -358,8 +358,8 @@ export function Address({ form }: AddressProps) {
               control={form.control}
               name="district"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>District</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">District</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -371,8 +371,8 @@ export function Address({ form }: AddressProps) {
               control={form.control}
               name="pinCode"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Pin Code</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Pin Code</FormLabel>
                   <FormControl>
                     <Input inputMode="numeric" maxLength={6} {...field} />
                   </FormControl>
@@ -384,8 +384,8 @@ export function Address({ form }: AddressProps) {
               control={form.control}
               name="stateCode"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>State/UT Code</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">State/UT Code</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -408,8 +408,8 @@ export function Address({ form }: AddressProps) {
               control={form.control}
               name="countryCode"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country (ISO 3166)</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Country (ISO 3166)</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -452,13 +452,13 @@ export function Address({ form }: AddressProps) {
             <CardTitle>Current Address</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
+          <div className="space-y-4">
               <FormField
                 control={form.control}
                 name="currentAddressLine1"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address Line 1</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Address Line 1</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -470,8 +470,8 @@ export function Address({ form }: AddressProps) {
                 control={form.control}
                 name="currentAddressLine2"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address Line 2</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Address Line 2</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -483,8 +483,8 @@ export function Address({ form }: AddressProps) {
                 control={form.control}
                 name="currentAddressLine3"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address Line 3</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Address Line 3</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -494,13 +494,13 @@ export function Address({ form }: AddressProps) {
               />
             </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="space-y-4">
               <FormField
                 control={form.control}
                 name="currentCityTownVillage"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City/Town/Village</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">City/Town/Village</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -512,8 +512,8 @@ export function Address({ form }: AddressProps) {
                 control={form.control}
                 name="currentDistrict"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>District</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">District</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -525,8 +525,8 @@ export function Address({ form }: AddressProps) {
                 control={form.control}
                 name="currentPinCode"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Pin Code</FormLabel>
+                <FormItem className="flex items-center gap-x-8">
+                  <FormLabel className="w-48">Pin Code</FormLabel>
                     <FormControl>
                       <Input inputMode="numeric" maxLength={6} {...field} />
                     </FormControl>
@@ -538,8 +538,8 @@ export function Address({ form }: AddressProps) {
                 control={form.control}
                 name="currentStateCode"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>State/UT Code</FormLabel>
+                  <FormItem className="flex items-center gap-x-8">
+                    <FormLabel className="w-48">State/UT Code</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -562,8 +562,8 @@ export function Address({ form }: AddressProps) {
                 control={form.control}
                 name="currentCountryCode"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country (ISO 3166)</FormLabel>
+                  <FormItem className="flex items-center gap-x-8">
+                    <FormLabel className="w-48">Country (ISO 3166)</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>

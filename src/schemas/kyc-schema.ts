@@ -10,10 +10,6 @@ export const kycSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),
   middleName: z.string().optional(),
   lastName: z.string().min(1, "Last Name is required"),
-  maidenName: z.string().optional(),
-  maidenPrefix: z.string().optional(),
-  maidenFirstName: z.string().optional(),
-  maidenMiddleName: z.string().optional(),
   fatherSpouseName: z.string().min(1, "Father/Spouse Name is required"),
   fatherSpousePrefix: z.string().optional(),
   fatherSpouseFirstName: z.string().optional(),
@@ -31,7 +27,6 @@ export const kycSchema = z.object({
   residentialStatus: z.enum(["resident-individual", "nri", "foreign-national", "pio"]),
   pan: z.string().regex(/^[A-Z]{5}\d{4}[A-Z]{1}$/, "Invalid PAN format"),
   form60Furnished: z.boolean().optional(), // Checkbox
-  photo: z.instanceof(File).optional(), // Image upload
 
   // Sections 2 & 3: Proof of Identity/Address & Current Address
   ovdType: z.enum(["passport", "voter-id", "driving-licence", "nrega", "npr", "aadhaar"]).optional(),
@@ -60,14 +55,11 @@ export const kycSchema = z.object({
   deemedProofDocumentCode: z.string().optional(), // For current address
 
   // Sections 4-6: Contact, Remarks, Declaration
-  telOffice: z.string().optional(),
-  telResidence: z.string().optional(),
   mobile: z.string().regex(/^\d{10}$/, "Mobile must be 10 digits"),
   email: z.string().email("Invalid email format"),
   remarks: z.string().optional(),
   declarationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
   declarationPlace: z.string().min(1, "Place is required"),
-  signature: z.instanceof(File).optional(), // Image upload
 }).superRefine((data, ctx) => {
   // Conditional: KYC number is mandatory on update applications
   if (data.applicationType === "update" && (!data.kycNumber || data.kycNumber.trim() === "")) {
